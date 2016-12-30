@@ -5,7 +5,6 @@
 //
 // Released under the MIT license
 // http://opensource.org/licenses/mit-license.php
-
 //
 (function( $ ){
   $.fn.autoKana2 = function(kanjiElement, kanaElement, options ) {
@@ -104,7 +103,6 @@
             if (nowInput !== orgInput){
               // 現在のテキストから入力開始前のテキストを削除した結果が現在入力中のテキストと一致しない場合は確定されたと判定
               addRuby(lastRubyStr);
-              //elKana.val(elKana.val() + appendN(lastRubyStr)); 
               orgText = elKanji.val().substr(0, elKanji.val().length -1);
               msimeFlag = false;
               ieSaveFlag = true;
@@ -141,7 +139,6 @@
       beforeCommitStr = "";
       if ((orgInput.length > 0 && orgInput !== orgText) || msimeFlag){
         addRuby(lastRubyStr);
-        //elKana.val(elKana.val() + appendN(lastRubyStr)); 
         beforeCommitStr = lastRubyStr;
         msimeFlag = false;
         checkPatternM(orgInput, lastRubyStr);
