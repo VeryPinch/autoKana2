@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="js/jquery-latest.min.js"></script>
+<script type="text/javascript" src="js/jquery.autoKana2.js"></script>
+
+<title>フリガナ取得のデモ</title>
+</head>
+<body>
+<!-- Start your code here -->
+<script type="text/javascript">
+  $(function(){
+    $.fn.autoKana2('#kanji', '#ruby1', { katakana : true});
+    $.fn.autoKana2('#kanji', '#ruby2');
+  });
+</script>
+<p>フリガナ取得</p>
+<table>
+<tr>
+<td>漢字</td>
+<td>
+  <input type="text" id="kanji" style="width: 300px;" />
+</td>
+</tr>
+<tr>
+<td>ルビ</td>
+<td>
+  <input type="text" id="ruby1" style="width: 300px;" />
+</td>
+</tr>
+<tr>
+<td>るび</td>
+<td>
+  <input type="text" id="ruby2" style="width: 300px;" />
+</td>
+</tr>
+</table>
+
+  
+
+<!-- End your code here -->
+</body>
+</html>
