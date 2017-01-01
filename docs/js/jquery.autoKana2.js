@@ -36,10 +36,11 @@
     var ua = navigator.userAgent.toLowerCase();
     var ver = navigator.appVersion.toLowerCase();
  
-    // IEはIME確定の挙動が変なので個別に対応する
+    // IEとEdgeはIME確定の挙動が変なので個別に対応する
     var isMSIE = (ua.indexOf("msie") > -1) && (ua.indexOf("opera") == -1);
     var isIE11 = (ua.indexOf("trident/7") > -1);
     var isIE = isMSIE || isIE11;
+    var isEdge = (ua.indexOf('edge') > -1);
     // Chromeの55.0.xはcompositionupdateの挙動が変なので対象外とする
     // 次のバージョンでは元に戻る事を期待して暫定対応としてバージョン決め打ちにする
     var isChrome = false;
@@ -96,7 +97,7 @@
         }
 
         // IEでは変換キーを押下後にEnter以外でIMEが確定した場合、compositionendイベントが発火しないので救済する
-        if (isIE){
+        if (isIE || isEdge){
           var nowText = elKanji.val();
           if (nowText.substr(0, orgText.length) === orgText){
             var nowInput = nowText.substr(orgText.length, nowText.length - orgText.length);
@@ -143,7 +144,7 @@
         msimeFlag = false;
         checkPatternM(orgInput, lastRubyStr);
       }
-      if (isIE){
+      if (isIE || isEdge){
         // IEの場合、全角SPの入力でcompositionupdateが発生しないので、ここで救済する
         var nowText = elKanji.val();
         if (orgText.length < nowText.length){
