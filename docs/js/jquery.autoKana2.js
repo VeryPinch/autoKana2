@@ -41,7 +41,7 @@
     var isIE11 = (ua.indexOf("trident/7") > -1);
     var isIE = isMSIE || isIE11;
     var isEdge = (ua.indexOf('edge') > -1);
-    // Chromeの55.0.xはcompositionupdateの挙動が変なので対象外とする
+    // Chromeの55.0.xはcompositionupdateの挙動が変なので個別対応とする
     // 次のバージョンでは元に戻る事を期待して暫定対応としてバージョン決め打ちにする
     var isChrome = false;
     if ((ua.indexOf("chrome") > -1) && (ua.indexOf("edge") == -1)){
@@ -51,14 +51,6 @@
         isChrome = true;
       }
     }
-    
-    elKanji.on("focus", function(){
-      if (isChrome){
-        elKanji.data("notSupport", "1");      
-      }else{
-        elKanji.data("notSupport", "0");            
-      }    
-    });
     
     elKanji.on("blur", function(){
       if (elKanji.data("notSupport") === "1"){
@@ -95,30 +87,52 @@
           // 平仮名←→片仮名変換は無視する
           return;
         }
+        
+        if (isChrome){
+          // Chrome 55.0.x はcompositionupdateのイベント引数で入力文字が1文字づつしか取得出来ないので
+          // setTimeoutで現在入力中のテキストを取得して補完する
+          setTimeout(function(){
+            var nowText = elKanji.val();
+            if (nowText.substr(0, orgText.length) === orgText && nowText.substr(nowText.length - 1) === rubyStr) {
+              rubyStr = nowText.substr(orgText.length, nowText.length);
+              rubyCheckStr = rubyStr.toWideCase().toKatakanaCase().replace(check_pattern, "");
+            }
 
-        // IEでは変換キーを押下後にEnter以外でIMEが確定した場合、compositionendイベントが発火しないので救済する
-        if (isIE || isEdge){
-          var nowText = elKanji.val();
-          if (nowText.substr(0, orgText.length) === orgText){
-            var nowInput = nowText.substr(orgText.length, nowText.length - orgText.length);
-            if (nowInput !== orgInput){
-              // 現在のテキストから入力開始前のテキストを削除した結果が現在入力中のテキストと一致しない場合は確定されたと判定
-              addRuby(lastRubyStr);
-              orgText = elKanji.val().substr(0, elKanji.val().length -1);
-              msimeFlag = false;
-              ieSaveFlag = true;
+            if (lastRubyCheckStr.length > 0 && rubyStr.length > 0 && rubyCheckStr.length === 0){
+              // かな→英数字記号変換は無視する
+              return;
+            }
+
+            if (rubyStr.length > 0){
+              lastRubyStr = rubyStr;
+            }
+          }, 0);
+        }else{
+          // IEでは変換キーを押下後にEnter以外でIMEが確定した場合、compositionendイベントが発火しないので救済する
+          if (isIE || isEdge){
+            var nowText = elKanji.val();
+            if (nowText.substr(0, orgText.length) === orgText){
+              var nowInput = nowText.substr(orgText.length, nowText.length - orgText.length);
+              if (nowInput !== orgInput){
+                // 現在のテキストから入力開始前のテキストを削除した結果が現在入力中のテキストと一致しない場合は確定されたと判定
+                addRuby(lastRubyStr);
+                orgText = elKanji.val().substr(0, elKanji.val().length -1);
+                msimeFlag = false;
+                ieSaveFlag = true;
+              }
             }
           }
-        }
-        
-        if (lastRubyCheckStr.length > 0 && rubyStr.length > 0 && rubyCheckStr.length === 0){
-          // かな→英数字記号変換は無視する
-          return;
+
+          if (lastRubyCheckStr.length > 0 && rubyStr.length > 0 && rubyCheckStr.length === 0){
+            // かな→英数字記号変換は無視する
+            return;
+          }
+
+          if (rubyStr.length > 0){
+            lastRubyStr = rubyStr;
+          }
         }
 
-        if (rubyStr.length > 0){
-          lastRubyStr = rubyStr;          
-        }
       }else{
         // MS-IMEの場合、IME変換後にBSキーで変換した文字を削除出来るので正しくルビを取得出来ない
         if (lastOrgInput.length - orgInput.length === 1){
