@@ -51,11 +51,15 @@
         isChrome = true;
       }
     }
-    
+
+    elKanji.on("focus", function(){
+      elKanji.data("notSupport", "0");
+    });
+
     elKanji.on("blur", function(){
       if (elKanji.data("notSupport") === "1"){
         alert("正しくルビを取得出来無かった可能性が有ります。");
-      }    
+      }
     });
       
     elKanji.on("compositionstart", function(e){
