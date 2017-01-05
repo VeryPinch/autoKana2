@@ -45,7 +45,16 @@
     var isIE = isMSIE || isIE11;
     var isEdge = (ua.indexOf('edge') > -1);
     var isSafari = (ua.indexOf('safari') > -1) && (ua.indexOf('chrome') == -1);
-    var isOpera = (ua.indexOf('opr') > -1);
+    var isOpera = (ua.indexOf('Opera') > -1);;
+    var isOpera42 = false;
+    if ((ua.indexOf("chrome") > -1) && (ua.indexOf("opr") > -1)){
+      isOpera = true;
+      var st = ua.indexOf("opr");
+      if (ua.substr(st + 4).indexOf("42.0") > -1){
+        isOpera42 = true;
+      }
+    }
+    (ua.indexOf('Opera') > -1);
     // Chromeの55.0.xはcompositionupdateの挙動が変なので個別対応とする
     // 次のバージョンでは元に戻る事を期待して暫定対応としてバージョン決め打ちにする
     var isChrome = false;
@@ -58,7 +67,7 @@
         isChrome55 = true;
       }
     }
-
+    
     elKanji.on("keyup", function(e){
       if (e.keyCode === 8){
         spCaptured = false;
@@ -100,7 +109,7 @@
           if (orgText.length > 0 && orgText.substr(elKanji[0].selectionStart - 1, 1) === "　") spCaptured = true;
         }
       }
-      if (isChrome55 || isOpera){
+      if (isChrome55 || isOpera42){
         if ((elKanji[0].selectionStart < elKanji[0].selectionEnd) || elKanji[0].selectionEnd < orgText.length){
           lastText = orgText.substr(elKanji[0].selectionEnd);
           orgText = orgText.substr(0, elKanji[0].selectionStart);
@@ -136,7 +145,7 @@
           return;
         }
         
-        if (isChrome55 || isOpera){
+        if (isChrome55 || isOpera42){
           // Chrome 55.0.x はcompositionupdateのイベント引数で入力文字が1文字づつしか取得出来ないので
           // setTimeoutで現在入力中のテキストを取得して補完する
           setTimeout(function(){
