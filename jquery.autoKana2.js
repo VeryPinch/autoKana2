@@ -32,6 +32,9 @@
     var orgText = "";
     var lastOrgInput = "";
     var msimeFlag = false;
+    var defaultText = "";
+    var spCaptured = false;
+    var lastText = "";
 
     var ua = navigator.userAgent.toLowerCase();
     var ver = navigator.appVersion.toLowerCase();
@@ -56,8 +59,24 @@
       }
     }
 
+    elKanji.on("keyup", function(e){
+      if (e.keyCode === 8){
+        // 全角SP入力でcompositionイベントが発生しないブラウザ対策
+        spCaptured = false;
+        var nowText = elKanji.val();
+        if (nowText.length === 0){
+          defaultText = "";
+        }else{
+          if(nowText.substr(nowText.length - 1) === "　")  spCaptured = true;
+        }
+      }
+    });
+
     elKanji.on("focus", function(){
       elKanji.data("notSupport", "0");
+      defaultText = elKanji.val();
+      // 全角SP入力でcompositionイベントが発生しないブラウザ対策
+      if (defaultText.length > 0 && defaultText.substr(defaultText.length - 1) === "　") spCaptured = true;
     });
 
     elKanji.on("blur", function(){
@@ -72,16 +91,23 @@
       if (beforeCommitStr.length > 0 && beforeCommitStr === e.originalEvent.data){
         var ruby = elKana.val();
         elKana.val(ruby.substr(0, ruby.length - beforeCommitStr.length));
+        lastRubyStr = e.originalEvent.data;
         msimeFlag = true;
       }
       beforeCommitStr = "";
       orgText = elKanji.val();
-
-      if (isChrome || isOpera || isSafari){
+      lastText = "";
+      if (isChrome55){
+        if (elKanji[0].selectionStart < elKanji[0].selectionEnd){
+          lastText = orgText.substr(elKanji[0].selectionEnd);
+          orgText = orgText.substr(0, elKanji[0].selectionStart);
+        }
+      }
+      if (!spCaptured && (isChrome || isOpera || isSafari)){
         // 全角SPの入力でcompositionstartイベントが発生しないブラウザは、ここで救済する
-      	for(var i = orgText.length - 1; i > -1; i--){
-      	 var lastChar = orgText.substr(i, 1);
-      	 if (lastChar.replace("　", "").length === 0){
+        for(var i = orgText.length - 1; i > -1; i--){
+          var lastChar = orgText.substr(i, 1);
+          if (lastChar === "　"){
             elKana.val(elKana.val() + lastChar);
           } else {
             break;
@@ -96,8 +122,8 @@
 
       var ieSaveFlag = false;
       if (orgInput.toWideCase().length === rubyStr.length){
-      	// ルビ取得対象外の文字が混じってない場合
-
+        // ルビ取得対象外の文字が混じってない場合
+        spCaptured = false;
         // 全角片仮名に変換して記号を取り除く
         var lastRubyCheckStr = lastRubyStr.toWideCase().toKatakanaCase().replace(check_pattern, "");
         var rubyCheckStr = rubyStr.toWideCase().toKatakanaCase().replace(check_pattern, "");
@@ -113,6 +139,9 @@
           // setTimeoutで現在入力中のテキストを取得して補完する
           setTimeout(function(){
             var nowText = elKanji.val();
+            if (lastText.length > 0){
+              nowText = nowText.substr(0, nowText.length - lastText.length);
+            }
             if (nowText.substr(0, orgText.length) === orgText && nowText.substr(nowText.length - 1) === rubyStr) {
               rubyStr = nowText.substr(orgText.length, nowText.length);
               rubyCheckStr = rubyStr.toWideCase().toKatakanaCase().replace(check_pattern, "");
@@ -172,20 +201,22 @@
     elKanji.on("compositionend", function(e){
       var orgInput = e.originalEvent.data;
       beforeCommitStr = "";
-      if ((orgInput.length > 0 && orgInput !== orgText) || msimeFlag){
+
+      if (orgInput.length > 0 || msimeFlag){
         addRuby(lastRubyStr);
         beforeCommitStr = lastRubyStr;
         msimeFlag = false;
         checkPatternM(orgInput, lastRubyStr);
         lastRubyStr = ""; // Safari 5.1.2は全角SP入力でcompositionendイベントのみ発生するのでクリアしておく
       }
-      if (isIE || isEdge || isSafari){
+
+      if (isIE || isEdge){
         // IEとEdgeは全角SPの入力でcompositionupdateが発生しないので、ここで救済する
         var nowText = elKanji.val();
         if (orgText.length < nowText.length){
           if (nowText.substr(0, orgText.length) === orgText){
             var work = nowText.substr(orgText.length, nowText.length - orgText.length);
-            if (work.replace("　", "").length === 0){
+            if (work === "　"){
               elKana.val(elKana.val() + work);
             }
           }
