@@ -45,12 +45,12 @@
     var isIE = isMSIE || isIE11;
     var isEdge = (ua.indexOf('edge') > -1);
     var isSafari = (ua.indexOf('safari') > -1) && (ua.indexOf('chrome') == -1);
-    var isOpera = (ua.indexOf('opera') > -1);
+    var isOpera = (ua.indexOf('opr') > -1);
     // Chromeの55.0.xはcompositionupdateの挙動が変なので個別対応とする
     // 次のバージョンでは元に戻る事を期待して暫定対応としてバージョン決め打ちにする
     var isChrome = false;
     var isChrome55 = false;
-    if ((ua.indexOf("chrome") > -1) && (ua.indexOf("edge") == -1)){
+    if ((ua.indexOf("chrome") > -1) && (ua.indexOf("opr") == -1)){
       isChrome = true;
       var st = ua.indexOf("chrome");
       var ed = ua.indexOf(" ", st);
@@ -100,8 +100,8 @@
           if (orgText.length > 0 && orgText.substr(elKanji[0].selectionStart - 1, 1) === "　") spCaptured = true;
         }
       }
-      if (isChrome55){
-        if (elKanji[0].selectionStart < elKanji[0].selectionEnd){
+      if (isChrome55 || isOpera){
+        if ((elKanji[0].selectionStart < elKanji[0].selectionEnd) || elKanji[0].selectionEnd < orgText.length){
           lastText = orgText.substr(elKanji[0].selectionEnd);
           orgText = orgText.substr(0, elKanji[0].selectionStart);
         }
@@ -122,7 +122,6 @@
     elKanji.on("compositionupdate", function(e){
       var orgInput = e.originalEvent.data;
       var rubyStr = orgInput.toWideCase().replace(ruby_pattern, ""); // 半角カナ入力を考慮して全角に揃える
-
       var ieSaveFlag = false;
       if (orgInput.toWideCase().length === rubyStr.length){
         // ルビ取得対象外の文字が混じってない場合
@@ -137,7 +136,7 @@
           return;
         }
         
-        if (isChrome55){
+        if (isChrome55 || isOpera){
           // Chrome 55.0.x はcompositionupdateのイベント引数で入力文字が1文字づつしか取得出来ないので
           // setTimeoutで現在入力中のテキストを取得して補完する
           setTimeout(function(){
