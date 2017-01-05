@@ -41,14 +41,18 @@
     var isIE11 = (ua.indexOf("trident/7") > -1);
     var isIE = isMSIE || isIE11;
     var isEdge = (ua.indexOf('edge') > -1);
+    var isSafari = (ua.indexOf('safari') > -1) && (ua.indexOf('chrome') == -1);
+    var isOpera = (ua.indexOf('opera') > -1);
     // Chromeの55.0.xはcompositionupdateの挙動が変なので個別対応とする
     // 次のバージョンでは元に戻る事を期待して暫定対応としてバージョン決め打ちにする
     var isChrome = false;
+    var isChrome55 = false;
     if ((ua.indexOf("chrome") > -1) && (ua.indexOf("edge") == -1)){
+      isChrome = true;
       var st = ua.indexOf("chrome");
       var ed = ua.indexOf(" ", st);
       if (ua.substring(st + 7, ed).indexOf("55.0") > -1){
-        isChrome = true;
+        isChrome55 = true;
       }
     }
 
@@ -72,6 +76,18 @@
       }
       beforeCommitStr = "";
       orgText = elKanji.val();
+
+      if (isChrome || isOpera || isSafari){
+        // 全角SPの入力でcompositionstartイベントが発生しないブラウザは、ここで救済する
+      	for(var i = orgText.length - 1; i > -1; i--){
+      	 var lastChar = orgText.substr(i, 1);
+      	 if (lastChar.replace("　", "").length === 0){
+            elKana.val(elKana.val() + lastChar);
+          } else {
+            break;
+          }
+      	}
+      }
     });
     
     elKanji.on("compositionupdate", function(e){
@@ -92,7 +108,7 @@
           return;
         }
         
-        if (isChrome){
+        if (isChrome55){
           // Chrome 55.0.x はcompositionupdateのイベント引数で入力文字が1文字づつしか取得出来ないので
           // setTimeoutで現在入力中のテキストを取得して補完する
           setTimeout(function(){
@@ -161,9 +177,10 @@
         beforeCommitStr = lastRubyStr;
         msimeFlag = false;
         checkPatternM(orgInput, lastRubyStr);
+        lastRubyStr = ""; // Safari 5.1.2は全角SP入力でcompositionendイベントのみ発生するのでクリアしておく
       }
-      if (isIE || isEdge){
-        // IEの場合、全角SPの入力でcompositionupdateが発生しないので、ここで救済する
+      if (isIE || isEdge || isSafari){
+        // IEとEdgeは全角SPの入力でcompositionupdateが発生しないので、ここで救済する
         var nowText = elKanji.val();
         if (orgText.length < nowText.length){
           if (nowText.substr(0, orgText.length) === orgText){
