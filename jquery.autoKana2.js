@@ -61,13 +61,12 @@
 
     elKanji.on("keyup", function(e){
       if (e.keyCode === 8){
-        // 全角SP入力でcompositionイベントが発生しないブラウザ対策
         spCaptured = false;
         var nowText = elKanji.val();
         if (nowText.length === 0){
           defaultText = "";
         }else{
-          if(nowText.substr(nowText.length - 1) === "　")  spCaptured = true;
+          if (nowText.substr(nowText.length - 1) === "　")  spCaptured = true;
         }
       }
     });
@@ -75,7 +74,6 @@
     elKanji.on("focus", function(){
       elKanji.data("notSupport", "0");
       defaultText = elKanji.val();
-      // 全角SP入力でcompositionイベントが発生しないブラウザ対策
       if (defaultText.length > 0 && defaultText.substr(defaultText.length - 1) === "　") spCaptured = true;
     });
 
@@ -97,6 +95,11 @@
       beforeCommitStr = "";
       orgText = elKanji.val();
       lastText = "";
+      if (window.getSelection){
+        if (elKanji[0].selectionStart < elKanji[0].selectionEnd){
+          if (orgText.length > 0 && orgText.substr(elKanji[0].selectionStart - 1, 1) === "　") spCaptured = true;
+        }
+      }
       if (isChrome55){
         if (elKanji[0].selectionStart < elKanji[0].selectionEnd){
           lastText = orgText.substr(elKanji[0].selectionEnd);
