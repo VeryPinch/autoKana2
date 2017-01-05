@@ -67,6 +67,7 @@
         isChrome55 = true;
       }
     }
+    var isNintendo = (ua.indexOf("mobile nintendobrowser") > -1);
     
     elKanji.on("keyup", function(e){
       if (e.keyCode === 8){
@@ -115,7 +116,7 @@
           orgText = orgText.substr(0, elKanji[0].selectionStart);
         }
       }
-      if (!spCaptured && (isChrome || isOpera || isSafari)){
+      if (!spCaptured && (isChrome || isOpera || isSafari || isNintendo)){
         // 全角SPの入力でcompositionstartイベントが発生しないブラウザは、ここで救済する
         for(var i = orgText.length - 1; i > -1; i--){
           var lastChar = orgText.substr(i, 1);
