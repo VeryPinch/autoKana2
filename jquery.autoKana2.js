@@ -184,7 +184,7 @@
             }
           }
 
-          if (lastRubyCheckStr.length > 0 && rubyStr.length > 0 && rubyCheckStr.length === 0){
+          if (!ieSaveFlag && lastRubyCheckStr.length > 0 && rubyStr.length > 0 && rubyCheckStr.length === 0){
             // かな→英数字記号変換は無視する
             return;
           }
