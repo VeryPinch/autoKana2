@@ -218,7 +218,7 @@
       // 文字列を入力し確定前にBSキーで1文字以上を削除した状態で、変換せずに確定した場合
       // IE とMS-IMEの組み合わせだとe.originalEvent.dataには何も入って来ないので救済する
       var ie_msime = false;
-      if (orgInput.length === 0 && lastRubyStr.length > 0){
+      if ((isIE || isEdge) && orgInput.length === 0 && lastRubyStr.length > 0){
         var targetText = nowText.substr(orgText.length);
         if (targetText.substr(targetText.length - lastRubyStr.length) === lastRubyStr){
           ie_msime = true;
