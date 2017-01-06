@@ -212,9 +212,20 @@
     
     elKanji.on("compositionend", function(e){
       var orgInput = e.originalEvent.data;
+      var nowText = elKanji.val();
       beforeCommitStr = "";
+      
+      // 文字列を入力し確定前にBSキーで1文字以上を削除した状態で、変換せずに確定した場合
+      // IE とMS-IMEの組み合わせだとe.originalEvent.dataには何も入って来ないので救済する
+      var ie_msime = false;
+      if (orgInput.length === 0 && lastRubyStr.length > 0){
+        var targetText = nowText.substr(orgText.length);
+        if (targetText.substr(targetText.length - lastRubyStr.length) === lastRubyStr){
+          ie_msime = true;
+        }
+      }
 
-      if (orgInput.length > 0 || msimeFlag){
+      if (orgInput.length > 0 || msimeFlag || ie_msime){
         addRuby(lastRubyStr);
         beforeCommitStr = lastRubyStr;
         msimeFlag = false;
@@ -224,7 +235,6 @@
 
       if (isIE || isEdge){
         // IEとEdgeは全角SPの入力でcompositionupdateが発生しないので、ここで救済する
-        var nowText = elKanji.val();
         if (orgText.length < nowText.length){
           if (nowText.substr(0, orgText.length) === orgText){
             var work = nowText.substr(orgText.length, nowText.length - orgText.length);
@@ -245,7 +255,7 @@
     // 文字列の最後がｎで終わってる場合、んに変換する
     function appendN(target){
       var result = target;
-      if (target.replace("　", "").length > 0){
+      if (target.toKatakanaCase().replace(check_pattern, "").replace("　", "").length > 0){
         var lastStr = target.substring(target.length - 1);
         if (lastStr.replace(n_pattern, "").length === 0){
           var testStr = target.substr(0, target.length - 1);
