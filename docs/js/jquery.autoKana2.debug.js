@@ -220,6 +220,9 @@
       $("#debug").val($("#debug").val() + "\n\n" + "compositionend");
       $("#debug").val($("#debug").val() + "\n" + "e.originalEvent.data:'" + e.originalEvent.data + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
+      setTimeout(function(){
+       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
+      }, 0);
       var orgInput = e.originalEvent.data;
       var nowText = elKanji.val();
       beforeCommitStr = "";
