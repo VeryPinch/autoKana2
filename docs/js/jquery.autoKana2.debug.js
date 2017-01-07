@@ -101,14 +101,14 @@
       $("#debug").val($("#debug").val() + "\n" + "e.originalEvent.data:'" + e.originalEvent.data + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
       $("#debug").val($("#debug").val() + "\n" + "beforeCommitStr:'" + beforeCommitStr + "'");
+      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionStart:'" + elKanji[0].selectionStart + "'");
+      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionEnd:'" + elKanji[0].selectionEnd + "'");
       lastRubyStr = "";
       selectText = "";
       orgText = elKanji.val();
       // MS-IME対策(IME未確定状態でクリックするとcompositionendイベントが発生する)
       if (isIE || isEdge || isFirefox){
       	selectText = elKanji.val().slice(elKanji[0].selectionStart, elKanji[0].selectionEnd);
-      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionStart:'" + elKanji[0].selectionStart + "'");
-      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionEnd:'" + elKanji[0].selectionEnd + "'");
       $("#debug").val($("#debug").val() + "\n" + "selectText:'" + selectText + "'");
       	if (selectText.length > 0){
       	  orgText = orgText.slice(0, elKanji[0].selectionStart) + orgText.slice(elKanji[0].selectionEnd, orgText.length);
