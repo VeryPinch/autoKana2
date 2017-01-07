@@ -96,6 +96,10 @@
     elKanji.on("compositionstart", function(e){
       $("#debug").val($("#debug").val() + "\n\n" + "compositionstart");
       $("#debug").val($("#debug").val() + "\n" + "e.originalEvent.data:'" + e.originalEvent.data + "'");
+      $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
+      setTimeout(function(){
+       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
+      }, 0);
       lastRubyStr = "";
       // MS-IME対策(IME未確定状態でクリックするとcompositionendイベントが発生する)
       if (beforeCommitStr.length > 0 && beforeCommitStr === e.originalEvent.data){
