@@ -44,6 +44,7 @@
     var isIE11 = (ua.indexOf("trident/7") > -1);
     var isIE = isMSIE || isIE11;
     var isEdge = (ua.indexOf('edge') > -1);
+    var isFirefox = (ua.indexOf('firefox') > -1);
     var isSafari = (ua.indexOf('safari') > -1) && (ua.indexOf('chrome') == -1);
     var isOpera = (ua.indexOf('Opera') > -1);;
     var isOpera42 = false;
@@ -95,15 +96,22 @@
       
     elKanji.on("compositionstart", function(e){
       lastRubyStr = "";
+      orgText = elKanji.val();
       // MS-IME対策(IME未確定状態でクリックするとcompositionendイベントが発生する)
-      if (beforeCommitStr.length > 0 && beforeCommitStr === e.originalEvent.data){
-        var ruby = elKana.val();
-        elKana.val(ruby.substr(0, ruby.length - beforeCommitStr.length));
-        lastRubyStr = e.originalEvent.data;
-        msimeFlag = true;
+      if (isIE || isEdge || isFirefox){
+      	var selectText = elKanji.val().slice(elKanji[0].selectionStart, elKanji[0].selectionEnd);
+      	if (selectText.length > 0){
+      	  orgText = orgText.slice(0, elKanji[0].selectionStart) + orgText.slice(elKanji[0].selectionEnd, orgText.length);
+        }else{
+          if (!isFirefox && beforeCommitStr.length > 0 && beforeCommitStr === e.originalEvent.data){
+            var ruby = elKana.val();
+            elKana.val(ruby.substr(0, ruby.length - beforeCommitStr.length));
+            lastRubyStr = e.originalEvent.data;
+            msimeFlag = true;
+          }
+        }
       }
       beforeCommitStr = "";
-      orgText = elKanji.val();
       lastText = "";
       if (window.getSelection){
         if (elKanji[0].selectionStart < elKanji[0].selectionEnd){
@@ -232,7 +240,7 @@
         beforeCommitStr = lastRubyStr;
         msimeFlag = false;
         checkPatternM(orgInput, lastRubyStr);
-        lastRubyStr = ""; // Safari 5.1.2は全角SP入力でcompositionendイベントのみ発生するのでクリアしておく
+        lastRubyStr = ""; // Safari 5.1.7は全角SP入力でcompositionendイベントのみ発生するのでクリアしておく
       }
 
       if (isIE || isEdge){
