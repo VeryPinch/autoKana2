@@ -219,6 +219,7 @@
     elKanji.on("compositionend", function(e){
       $("#debug").val($("#debug").val() + "\n\n" + "compositionend");
       $("#debug").val($("#debug").val() + "\n" + "e.originalEvent.data:'" + e.originalEvent.data + "'");
+      $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
       var orgInput = e.originalEvent.data;
       var nowText = elKanji.val();
       beforeCommitStr = "";
