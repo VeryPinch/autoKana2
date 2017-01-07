@@ -136,6 +136,9 @@
       $("#debug").val($("#debug").val() + "\n\n" + "compositionupdate");
       $("#debug").val($("#debug").val() + "\n" + "e.originalEvent.data:'" + e.originalEvent.data + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
+      setTimeout(function(){
+        $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
+      }, 0);
       var orgInput = e.originalEvent.data;
       var rubyStr = orgInput.toWideCase().replace(ruby_pattern, ""); // 半角カナ入力を考慮して全角に揃える
       var ieSaveFlag = false;
