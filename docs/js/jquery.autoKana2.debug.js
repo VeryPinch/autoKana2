@@ -97,9 +97,6 @@
       $("#debug").val($("#debug").val() + "\n\n" + "compositionstart");
       $("#debug").val($("#debug").val() + "\n" + "e.originalEvent.data:'" + e.originalEvent.data + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
-      setTimeout(function(){
-       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
-      }, 0);
       lastRubyStr = "";
       // MS-IME対策(IME未確定状態でクリックするとcompositionendイベントが発生する)
       if (beforeCommitStr.length > 0 && beforeCommitStr === e.originalEvent.data){
@@ -138,6 +135,7 @@
     elKanji.on("compositionupdate", function(e){
       $("#debug").val($("#debug").val() + "\n\n" + "compositionupdate");
       $("#debug").val($("#debug").val() + "\n" + "e.originalEvent.data:'" + e.originalEvent.data + "'");
+      $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
       var orgInput = e.originalEvent.data;
       var rubyStr = orgInput.toWideCase().replace(ruby_pattern, ""); // 半角カナ入力を考慮して全角に揃える
       var ieSaveFlag = false;
@@ -224,9 +222,6 @@
       $("#debug").val($("#debug").val() + "\n\n" + "compositionend");
       $("#debug").val($("#debug").val() + "\n" + "e.originalEvent.data:'" + e.originalEvent.data + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
-      setTimeout(function(){
-       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
-      }, 0);
       var orgInput = e.originalEvent.data;
       var nowText = elKanji.val();
       beforeCommitStr = "";
