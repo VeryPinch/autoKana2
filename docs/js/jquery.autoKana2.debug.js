@@ -35,6 +35,8 @@
     var defaultText = "";
     var spCaptured = false;
     var lastText = "";
+    var selectText = "";
+    var ff_msimeFlag = false;
 
     var ua = navigator.userAgent.toLowerCase();
     var ver = navigator.appVersion.toLowerCase();
@@ -44,6 +46,7 @@
     var isIE11 = (ua.indexOf("trident/7") > -1);
     var isIE = isMSIE || isIE11;
     var isEdge = (ua.indexOf('edge') > -1);
+    var isFirefox = (ua.indexOf('firefox') > -1);
     var isSafari = (ua.indexOf('safari') > -1) && (ua.indexOf('chrome') == -1);
     var isOpera = (ua.indexOf('Opera') > -1);;
     var isOpera42 = false;
@@ -97,16 +100,33 @@
       $("#debug").val($("#debug").val() + "\n\n" + "compositionstart");
       $("#debug").val($("#debug").val() + "\n" + "e.originalEvent.data:'" + e.originalEvent.data + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
+      $("#debug").val($("#debug").val() + "\n" + "beforeCommitStr:'" + beforeCommitStr + "'");
       lastRubyStr = "";
+      selectText = "";
+      orgText = elKanji.val();
       // MS-IME対策(IME未確定状態でクリックするとcompositionendイベントが発生する)
-      if (beforeCommitStr.length > 0 && beforeCommitStr === e.originalEvent.data){
-        var ruby = elKana.val();
-        elKana.val(ruby.substr(0, ruby.length - beforeCommitStr.length));
-        lastRubyStr = e.originalEvent.data;
-        msimeFlag = true;
+      if (isIE || isEdge || isFirefox){
+      	selectText = elKanji.val().slice(elKanji[0].selectionStart, elKanji[0].selectionEnd);
+      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionStart:'" + elKanji[0].selectionStart + "'");
+      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionEnd:'" + elKanji[0].selectionEnd + "'");
+      $("#debug").val($("#debug").val() + "\n" + "selectText:'" + selectText + "'");
+      	if (selectText.length > 0){
+      	  orgText = orgText.slice(0, elKanji[0].selectionStart) + orgText.slice(elKanji[0].selectionEnd, orgText.length);
+      	  if (isFirefox && beforeCommitStr.length > 0 && beforeCommitStr === e.originalEvent.data){
+      	    ff_msimeFlag = true;
+      	  }
+      $("#debug").val($("#debug").val() + "\n" + "orgText:'" + orgText + "'");
+        }else{
+          if (beforeCommitStr.length > 0 && beforeCommitStr === e.originalEvent.data){
+            $("#debug").val($("#debug").val() + "\n" + "クリック対策");
+            var ruby = elKana.val();
+            elKana.val(ruby.substr(0, ruby.length - beforeCommitStr.length));
+            lastRubyStr = e.originalEvent.data;
+            msimeFlag = true;
+          }
+        }
       }
       beforeCommitStr = "";
-      orgText = elKanji.val();
       lastText = "";
       if (window.getSelection){
         if (elKanji[0].selectionStart < elKanji[0].selectionEnd){
@@ -180,12 +200,22 @@
             }
           }, 0);
         }else{
+        $("#debug").val($("#debug").val() + "\n" + "lastRubyStr:'" + lastRubyStr + "'");
+        $("#debug").val($("#debug").val() + "\n" + "rubyStr:'" + rubyStr + "'");
+          if (ff_msimeFlag){
+            if (selectText !== rubyStr){
+              ff_msimeFlag = false;
+            }
+          }
           // IEでは変換キーを押下後にEnter以外でIMEが確定した場合、compositionendイベントが発火しないので救済する
           if (isIE || isEdge){
             var nowText = elKanji.val();
+        $("#debug").val($("#debug").val() + "\n" + "orgText:'" + orgText + "'");
+        $("#debug").val($("#debug").val() + "\n" + "nowText:'" + nowText + "'");
             if (nowText.substr(0, orgText.length) === orgText){
               var nowInput = nowText.substr(orgText.length, nowText.length - orgText.length);
               if (nowInput !== orgInput){
+      $("#debug").val($("#debug").val() + "\n" + "Enter以外の確定対策");
                 // 現在のテキストから入力開始前のテキストを削除した結果が現在入力中のテキストと一致しない場合は確定されたと判定
                 addRuby(lastRubyStr);
                 orgText = elKanji.val().substr(0, elKanji.val().length -1);
@@ -200,9 +230,16 @@
             return;
           }
 
-          if (rubyStr.length > 0){
-            lastRubyStr = rubyStr;
+      $("#debug").val($("#debug").val() + "\n" + "ff_msimeFlag:'" + ff_msimeFlag + "'");
+
+          if (ff_msimeFlag){
+            lastRubyStr = "";
+          }else{
+            if (rubyStr.length > 0){
+              lastRubyStr = rubyStr;
+            }
           }
+          ff_msimeFlag = false;
         }
 
       }else{
@@ -244,7 +281,7 @@
         beforeCommitStr = lastRubyStr;
         msimeFlag = false;
         checkPatternM(orgInput, lastRubyStr);
-        lastRubyStr = ""; // Safari 5.1.2は全角SP入力でcompositionendイベントのみ発生するのでクリアしておく
+        lastRubyStr = ""; // Safari 5.1.7は全角SP入力でcompositionendイベントのみ発生するのでクリアしておく
       }
 
       if (isIE || isEdge){
