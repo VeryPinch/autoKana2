@@ -63,7 +63,7 @@
       isChrome = true;
       var st = ua.indexOf("chrome");
       var ed = ua.indexOf(" ", st);
-      if (ua.substring(st + 7, ed).indexOf("55.0") > -1){
+      if ((ua.substring(st + 7, ed).indexOf("55.0") > -1) || (ua.substring(st + 7, ed).indexOf("56.0") > -1)){
         isChrome55 = true;
       }
     }
@@ -166,6 +166,8 @@
 
             if (rubyStr.length > 0){
               lastRubyStr = rubyStr;
+            }else{
+              lastRubyStr = lastRubyStr.substr(0, lastRubyStr.length -1);
             }
           }, 0);
         }else{
