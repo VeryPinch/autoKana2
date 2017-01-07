@@ -35,6 +35,8 @@
     var defaultText = "";
     var spCaptured = false;
     var lastText = "";
+    var selectText = "";
+    var ff_msimeFlag = false;
 
     var ua = navigator.userAgent.toLowerCase();
     var ver = navigator.appVersion.toLowerCase();
@@ -96,14 +98,18 @@
       
     elKanji.on("compositionstart", function(e){
       lastRubyStr = "";
+      selectText = "";
       orgText = elKanji.val();
       // MS-IME対策(IME未確定状態でクリックするとcompositionendイベントが発生する)
       if (isIE || isEdge || isFirefox){
-      	var selectText = elKanji.val().slice(elKanji[0].selectionStart, elKanji[0].selectionEnd);
+      	selectText = elKanji.val().slice(elKanji[0].selectionStart, elKanji[0].selectionEnd);
       	if (selectText.length > 0){
       	  orgText = orgText.slice(0, elKanji[0].selectionStart) + orgText.slice(elKanji[0].selectionEnd, orgText.length);
+      	  if (isFirefox && beforeCommitStr.length > 0 && beforeCommitStr === e.originalEvent.data){
+      	    ff_msimeFlag = true;
+      	  }
         }else{
-          if (!isFirefox && beforeCommitStr.length > 0 && beforeCommitStr === e.originalEvent.data){
+          if (beforeCommitStr.length > 0 && beforeCommitStr === e.originalEvent.data){
             var ruby = elKana.val();
             elKana.val(ruby.substr(0, ruby.length - beforeCommitStr.length));
             lastRubyStr = e.originalEvent.data;
@@ -179,6 +185,11 @@
             }
           }, 0);
         }else{
+          if (ff_msimeFlag){
+            if (selectText !== rubyStr){
+              ff_msimeFlag = false;
+            }
+          }
           // IEでは変換キーを押下後にEnter以外でIMEが確定した場合、compositionendイベントが発火しないので救済する
           if (isIE || isEdge){
             var nowText = elKanji.val();
@@ -199,9 +210,14 @@
             return;
           }
 
-          if (rubyStr.length > 0){
-            lastRubyStr = rubyStr;
+          if (ff_msimeFlag){
+            lastRubyStr = "";
+          }else{
+            if (rubyStr.length > 0){
+              lastRubyStr = rubyStr;
+            }
           }
+          ff_msimeFlag = false;
         }
 
       }else{
