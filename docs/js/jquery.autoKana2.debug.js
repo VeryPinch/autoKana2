@@ -302,7 +302,7 @@
               elKanji.data("notSupport", "1");
             }
           }
-        }, 5);
+        }, 10);
       }
 
       
