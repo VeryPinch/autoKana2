@@ -283,6 +283,8 @@
         // iOSで分節変換をした場合はupdateイベントが割り込んで来る
         setTimeout(function(){
       $("#debug").val($("#debug").val() + "\n" + "nowEvent:'" + nowEvent + "'");
+      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionStart:'" + elKanji[0].selectionStart + "'");
+      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionEnd:'" + elKanji[0].selectionEnd + "'");
           if (nowEvent === "update"){
             var nowStr = elKanji.val();
             var extraStr = nowStr.substr(lastOrgInput.length, nowStr.length - lastOrgInput.length);
