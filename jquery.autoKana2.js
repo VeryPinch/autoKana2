@@ -37,6 +37,7 @@
     var lastText = "";
     var selectText = "";
     var ff_msimeFlag = false;
+    var nowEvent = "";
 
     var ua = navigator.userAgent.toLowerCase();
     var ver = navigator.appVersion.toLowerCase();
@@ -48,6 +49,11 @@
     var isEdge = (ua.indexOf('edge') > -1);
     var isFirefox = (ua.indexOf('firefox') > -1);
     var isSafari = (ua.indexOf('safari') > -1) && (ua.indexOf('chrome') == -1);
+    var isiPhone = (ua.indexOf('iphone') > -1);
+    var isiPad = (ua.indexOf('ipad') > -1);
+    var isiOS = isiPhone || isiPad;
+    var isAndroid = (ua.indexOf('android') > -1);
+
     var isOpera = (ua.indexOf('Opera') > -1);;
     var isOpera42 = false;
     if ((ua.indexOf("chrome") > -1) && (ua.indexOf("opr") > -1)){
@@ -97,6 +103,7 @@
     });
       
     elKanji.on("compositionstart", function(e){
+      nowEvent = "start";
       lastRubyStr = "";
       selectText = "";
       orgText = elKanji.val();
@@ -144,6 +151,7 @@
     });
     
     elKanji.on("compositionupdate", function(e){
+      nowEvent = "update";
       var orgInput = e.originalEvent.data;
       var rubyStr = orgInput.toWideCase().replace(ruby_pattern, ""); // 半角カナ入力を考慮して全角に揃える
       var ieSaveFlag = false;
@@ -237,9 +245,26 @@
     });
     
     elKanji.on("compositionend", function(e){
+      nowEvent = "end";
       var orgInput = e.originalEvent.data;
       var nowText = elKanji.val();
       beforeCommitStr = "";
+
+      if (isiOS || isAndroid){
+        // iOSやAndroidで分節変換をした場合はupdateイベントまで処理が遅延する
+        setTimeout(function(){
+          if (nowEvent === "update"){
+            var nowStr = elKanji.val();
+            var extraStr = nowStr.substr(lastOrgInput.length, nowStr.length - lastOrgInput.length);
+            extraStr = settings.katakana ? extraStr.toKatakanaCase() : extraStr.toHiraganaCase();
+            var nowRuby = elKana.val();
+            if (nowRuby.substr(nowRuby.length - extraStr.length) === extraStr){
+              elKana.val(nowRuby.substr(0, nowRuby.length - extraStr.length));
+            }
+          }
+        }, 0);
+      }
+
       
       // 文字列を入力し確定前にBSキーで1文字以上を削除した状態で、変換せずに確定した場合
       // IE とMS-IMEの組み合わせだとe.originalEvent.dataには何も入って来ないので救済する
