@@ -274,11 +274,16 @@
       if (isiOS){
         // iOSで分節変換をした場合はupdateイベントが割り込んで来る
         setTimeout(function(){
+      $("#debug").val($("#debug").val() + "\n" + "nowEvent:'" + nowEvent + "'");
           if (nowEvent === "update"){
             var nowStr = elKanji.val();
             var extraStr = nowStr.substr(lastOrgInput.length, nowStr.length - lastOrgInput.length);
             extraStr = settings.katakana ? extraStr.toKatakanaCase() : extraStr.toHiraganaCase();
             var nowRuby = elKana.val();
+      $("#debug").val($("#debug").val() + "\n" + "nowStr:'" + nowStr + "'");
+      $("#debug").val($("#debug").val() + "\n" + "extraStr:'" + extraStr + "'");
+      $("#debug").val($("#debug").val() + "\n" + "nowRuby:'" + nowRuby + "'");
+      $("#debug").val($("#debug").val() + "\n" + "nowRuby.substr(nowRuby.length - extraStr.length):'" + nowRuby.substr(nowRuby.length - extraStr.length) + "'");
             if (nowRuby.substr(nowRuby.length - extraStr.length) === extraStr){
               elKana.val(nowRuby.substr(0, nowRuby.length - extraStr.length));
             }
