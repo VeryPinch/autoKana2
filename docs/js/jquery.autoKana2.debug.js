@@ -52,6 +52,8 @@
     var isiPhone = (ua.indexOf('iphone') > -1);
     var isiPad = (ua.indexOf('ipad') > -1);
     var isiOS = isiPhone || isiPad;
+    var isAndroid = (ua.indexOf('android') > -1);
+
     var isOpera = (ua.indexOf('Opera') > -1);;
     var isOpera42 = false;
     if ((ua.indexOf("chrome") > -1) && (ua.indexOf("opr") > -1)){
@@ -279,7 +281,7 @@
       $("#debug").val($("#debug").val() + "\n" + "isiOS:'" + isiOS + "'");
 
 
-      if (isiOS){
+      if (isiOS || isAndroid){
         // iOSで分節変換をした場合はupdateイベントが割り込んで来る
         setTimeout(function(){
       $("#debug").val($("#debug").val() + "\n" + "nowEvent:'" + nowEvent + "'");
