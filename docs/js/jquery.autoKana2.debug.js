@@ -298,7 +298,7 @@
               elKana.val(nowRuby.substr(0, nowRuby.length - extraStr.length));
             }
           }
-        }, 1);
+        }, 0);
       }
 
       
