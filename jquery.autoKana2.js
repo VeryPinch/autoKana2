@@ -255,14 +255,14 @@
         setTimeout(function(){
           if (nowEvent === "update"){
             var nowStr = elKanji.val();
-            var extraStr = nowStr.substr(lastOrgInput.length, nowStr.length - lastOrgInput.length);
+            var extraStr = nowStr.substr(nowStr.length - lastOrgInput.length, lastOrgInput.length);
             extraStr = settings.katakana ? extraStr.toKatakanaCase() : extraStr.toHiraganaCase();
             var nowRuby = elKana.val();
             if (nowRuby.substr(nowRuby.length - extraStr.length) === extraStr){
               elKana.val(nowRuby.substr(0, nowRuby.length - extraStr.length));
             }
           }
-        }, 0);
+        }, 20);
       }
 
       

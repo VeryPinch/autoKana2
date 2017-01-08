@@ -282,7 +282,7 @@
 
 
       if (isiOS || isAndroid){
-        // iOSで分節変換をした場合はupdateイベントが割り込んで来る
+        // iOSやAndroidで分節変換をした場合はupdateイベントまで処理が遅延する
         setTimeout(function(){
       $("#debug").val($("#debug").val() + "\n" + "nowEvent:'" + nowEvent + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionStart:'" + elKanji[0].selectionStart + "'");
