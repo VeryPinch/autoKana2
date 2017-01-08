@@ -293,6 +293,7 @@
             extraStr = settings.katakana ? extraStr.toKatakanaCase() : extraStr.toHiraganaCase();
             var nowRuby = elKana.val();
       $("#debug").val($("#debug").val() + "\n" + "nowStr:'" + nowStr + "'");
+      $("#debug").val($("#debug").val() + "\n" + "lastOrgInput:'" + lastOrgInput + "'");
       $("#debug").val($("#debug").val() + "\n" + "extraStr:'" + extraStr + "'");
       $("#debug").val($("#debug").val() + "\n" + "nowRuby:'" + nowRuby + "'");
       $("#debug").val($("#debug").val() + "\n" + "nowRuby.substr(nowRuby.length - extraStr.length):'" + nowRuby.substr(nowRuby.length - extraStr.length) + "'");
