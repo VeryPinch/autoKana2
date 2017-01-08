@@ -299,9 +299,10 @@
       $("#debug").val($("#debug").val() + "\n" + "nowRuby.substr(nowRuby.length - extraStr.length):'" + nowRuby.substr(nowRuby.length - extraStr.length) + "'");
             if (nowRuby.substr(nowRuby.length - extraStr.length) === extraStr){
               elKana.val(nowRuby.substr(0, nowRuby.length - extraStr.length));
+              elKanji.data("notSupport", "1");
             }
           }
-        }, 20);
+        }, 5);
       }
 
       
