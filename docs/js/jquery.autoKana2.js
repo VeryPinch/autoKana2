@@ -37,7 +37,6 @@
     var lastText = "";
     var selectText = "";
     var ff_msimeFlag = false;
-    var nowEvent = "";
 
     var ua = navigator.userAgent.toLowerCase();
     var ver = navigator.appVersion.toLowerCase();
@@ -249,22 +248,6 @@
       var orgInput = e.originalEvent.data;
       var nowText = elKanji.val();
       beforeCommitStr = "";
-
-      if (isiOS || isAndroid){
-        // iOSやAndroidで分節変換をした場合はupdateイベントまで処理が遅延する
-        setTimeout(function(){
-          if (nowEvent === "update"){
-            var nowStr = elKanji.val();
-            var extraStr = nowStr.substr(nowStr.length - lastOrgInput.length, lastOrgInput.length);
-            extraStr = settings.katakana ? extraStr.toKatakanaCase() : extraStr.toHiraganaCase();
-            var nowRuby = elKana.val();
-            if (nowRuby.substr(nowRuby.length - extraStr.length) === extraStr){
-              elKana.val(nowRuby.substr(0, nowRuby.length - extraStr.length));
-            }
-          }
-        }, 20);
-      }
-
       
       // 文字列を入力し確定前にBSキーで1文字以上を削除した状態で、変換せずに確定した場合
       // IE とMS-IMEの組み合わせだとe.originalEvent.dataには何も入って来ないので救済する
