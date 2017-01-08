@@ -289,7 +289,7 @@
       $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionEnd:'" + elKanji[0].selectionEnd + "'");
           if (nowEvent === "update"){
             var nowStr = elKanji.val();
-            var extraStr = nowStr.substr(lastOrgInput.length, nowStr.length - lastOrgInput.length);
+            var extraStr = nowStr.substr(nowStr.length - lastOrgInput.length, lastOrgInput.length);
             extraStr = settings.katakana ? extraStr.toKatakanaCase() : extraStr.toHiraganaCase();
             var nowRuby = elKana.val();
       $("#debug").val($("#debug").val() + "\n" + "nowStr:'" + nowStr + "'");
