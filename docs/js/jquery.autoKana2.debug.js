@@ -37,7 +37,6 @@
     var lastText = "";
     var selectText = "";
     var ff_msimeFlag = false;
-    var nowEvent = "";
 
     var ua = navigator.userAgent.toLowerCase();
     var ver = navigator.appVersion.toLowerCase();
@@ -78,7 +77,14 @@
     }
     var isNintendo = (ua.indexOf("mobile nintendobrowser") > -1);
 
+    elKanji.on("keydown", function(e){
+      $("#debug").val($("#debug").val() + "\n\n" + "keydown");
+      $("#debug").val($("#debug").val() + "\n" + "e.keyCode:'" + e.keyCode + "'");
+    });
+
     elKanji.on("keyup", function(e){
+      $("#debug").val($("#debug").val() + "\n\n" + "keyup");
+      $("#debug").val($("#debug").val() + "\n" + "e.keyCode:'" + e.keyCode + "'");
       if (e.keyCode === 8){
         spCaptured = false;
         var nowText = elKanji.val();
@@ -109,7 +115,6 @@
       $("#debug").val($("#debug").val() + "\n" + "beforeCommitStr:'" + beforeCommitStr + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionStart:'" + elKanji[0].selectionStart + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionEnd:'" + elKanji[0].selectionEnd + "'");
-      nowEvent = "start";
       lastRubyStr = "";
       selectText = "";
       orgText = elKanji.val();
@@ -166,7 +171,6 @@
       setTimeout(function(){
       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
       }, 0);
-      nowEvent = "update";
       var orgInput = e.originalEvent.data;
       var rubyStr = orgInput.toWideCase().replace(ruby_pattern, ""); // 半角カナ入力を考慮して全角に揃える
       var ieSaveFlag = false;
@@ -271,40 +275,9 @@
       $("#debug").val($("#debug").val() + "\n" + "e.originalEvent.data:'" + e.originalEvent.data + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
       
-      nowEvent = "end";
       var orgInput = e.originalEvent.data;
       var nowText = elKanji.val();
       beforeCommitStr = "";
-
-      $("#debug").val($("#debug").val() + "\n" + "isiPhone:'" + isiPhone + "'");
-      $("#debug").val($("#debug").val() + "\n" + "isiPad:'" + isiPad + "'");
-      $("#debug").val($("#debug").val() + "\n" + "isiOS:'" + isiOS + "'");
-
-
-      if (isiOS || isAndroid){
-        // iOSやAndroidで分節変換をした場合はupdateイベントまで処理が遅延する
-        setTimeout(function(){
-      $("#debug").val($("#debug").val() + "\n" + "nowEvent:'" + nowEvent + "'");
-      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionStart:'" + elKanji[0].selectionStart + "'");
-      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionEnd:'" + elKanji[0].selectionEnd + "'");
-          if (nowEvent === "update"){
-            var nowStr = elKanji.val();
-            var extraStr = nowStr.substr(nowStr.length - lastOrgInput.length, lastOrgInput.length);
-            extraStr = settings.katakana ? extraStr.toKatakanaCase() : extraStr.toHiraganaCase();
-            var nowRuby = elKana.val();
-      $("#debug").val($("#debug").val() + "\n" + "nowStr:'" + nowStr + "'");
-      $("#debug").val($("#debug").val() + "\n" + "lastOrgInput:'" + lastOrgInput + "'");
-      $("#debug").val($("#debug").val() + "\n" + "extraStr:'" + extraStr + "'");
-      $("#debug").val($("#debug").val() + "\n" + "nowRuby:'" + nowRuby + "'");
-      $("#debug").val($("#debug").val() + "\n" + "nowRuby.substr(nowRuby.length - extraStr.length):'" + nowRuby.substr(nowRuby.length - extraStr.length) + "'");
-            if (nowRuby.substr(nowRuby.length - extraStr.length) === extraStr){
-              elKana.val(nowRuby.substr(0, nowRuby.length - extraStr.length));
-              elKanji.data("notSupport", "1");
-            }
-          }
-        }, 10);
-      }
-
       
       // 文字列を入力し確定前にBSキーで1文字以上を削除した状態で、変換せずに確定した場合
       // IE とMS-IMEの組み合わせだとe.originalEvent.dataには何も入って来ないので救済する
