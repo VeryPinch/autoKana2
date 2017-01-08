@@ -271,6 +271,11 @@
       var nowText = elKanji.val();
       beforeCommitStr = "";
 
+      $("#debug").val($("#debug").val() + "\n" + "isiPhone:'" + isiPhone + "'");
+      $("#debug").val($("#debug").val() + "\n" + "isiPad:'" + isiPad + "'");
+      $("#debug").val($("#debug").val() + "\n" + "isiOS:'" + isiOS + "'");
+
+
       if (isiOS){
         // iOSで分節変換をした場合はupdateイベントが割り込んで来る
         setTimeout(function(){
