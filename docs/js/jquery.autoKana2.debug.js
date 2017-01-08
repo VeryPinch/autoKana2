@@ -37,6 +37,7 @@
     var lastText = "";
     var selectText = "";
     var ff_msimeFlag = false;
+    var nowInputStr = "";
 
     var ua = navigator.userAgent.toLowerCase();
     var ver = navigator.appVersion.toLowerCase();
@@ -103,6 +104,10 @@
       $("#debug").val($("#debug").val() + "\n" + "beforeCommitStr:'" + beforeCommitStr + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionStart:'" + elKanji[0].selectionStart + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionEnd:'" + elKanji[0].selectionEnd + "'");
+      var getStr = getInputString();
+      getStr.done(function(){
+        $("#debug").val($("#debug").val() + "\n" + "nowInputStr:'" + nowInputStr + "'");
+      });
       lastRubyStr = "";
       selectText = "";
       orgText = elKanji.val();
@@ -296,6 +301,16 @@
         }
       }
     });
+    
+    // 入力中の文字列を取得する
+    var getInputString = function(){
+      var defer = $.Deferred();
+      setTimeout(function(){
+        nowInputStr = elKanji.val();
+        defer.resolve();
+      }, 0);
+      return defer.promise();
+    };
     
     // ルビを追加する
     function addRuby(target){
