@@ -327,6 +327,22 @@
         checkPatternM(orgInput, lastRubyStr);
       }
       
+       setTimeout(function(){
+         var nowText = elKanji.val();
+         if (nowText.substr(0, orgText.length) === orgText){
+           var nowInput = nowText.substr(orgText.length, nowText.length - orgText.length);
+      $("#debug").val($("#debug").val() + "\n" + "nowInput:'" + nowInput + "'");
+           if (nowInput !== orgInput){
+             var index = nowInput.indexOf(orgInput);
+             if (index > -1){
+               var work = nowInput.substr(index + orgInput.length, nowInput.length - (index + orgInput.length));
+      $("#debug").val($("#debug").val() + "\n" + "work:'" + work + "'");
+               lastRubyStr = lastRubyStr.substr(0, lastRubyStr.length - work.length);
+             }
+           }
+         }
+       }, 0);
+      
     });
     
     elKanji.on("compositionend", function(e){
