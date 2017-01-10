@@ -205,6 +205,11 @@
               return;
             }
 
+            if (lastRubyStr.substr(0, rubyStr.length - 1) !== rubyStr.substr(0, rubyStr.length - 1)){
+              // かな英数字記号の混ぜ書き変換は無視する
+              return;
+            }
+
             if (rubyStr.length > 0){
               lastRubyStr = rubyStr;
             }else{
@@ -241,8 +246,11 @@
             // かな→英数字記号変換は無視する
             return;
           }
-
-      $("#debug").val($("#debug").val() + "\n" + "ff_msimeFlag:'" + ff_msimeFlag + "'");
+          
+          if (lastRubyStr.substr(0, rubyStr.length - 1) !== rubyStr.substr(0, rubyStr.length - 1)){
+            // かな英数字記号の混ぜ書き変換は無視する
+            return;
+          }
 
           if (ff_msimeFlag){
             lastRubyStr = "";

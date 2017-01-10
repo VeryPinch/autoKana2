@@ -102,7 +102,6 @@
     });
       
     elKanji.on("compositionstart", function(e){
-      nowEvent = "start";
       lastRubyStr = "";
       selectText = "";
       orgText = elKanji.val();
@@ -150,7 +149,6 @@
     });
     
     elKanji.on("compositionupdate", function(e){
-      nowEvent = "update";
       var orgInput = e.originalEvent.data;
       var rubyStr = orgInput.toWideCase().replace(ruby_pattern, ""); // 半角カナ入力を考慮して全角に揃える
       var ieSaveFlag = false;
@@ -185,6 +183,11 @@
               return;
             }
 
+            if (lastRubyStr.substr(0, rubyStr.length - 1) !== rubyStr.substr(0, rubyStr.length - 1)){
+              // かな英数字記号の混ぜ書き変換は無視する
+              return;
+            }
+
             if (rubyStr.length > 0){
               lastRubyStr = rubyStr;
             }else{
@@ -216,6 +219,11 @@
             // かな→英数字記号変換は無視する
             return;
           }
+          
+          if (lastRubyStr.substr(0, rubyStr.length - 1) !== rubyStr.substr(0, rubyStr.length - 1)){
+            // かな英数字記号の混ぜ書き変換は無視する
+            return;
+          }
 
           if (ff_msimeFlag){
             lastRubyStr = "";
@@ -244,7 +252,6 @@
     });
     
     elKanji.on("compositionend", function(e){
-      nowEvent = "end";
       var orgInput = e.originalEvent.data;
       var nowText = elKanji.val();
       beforeCommitStr = "";
