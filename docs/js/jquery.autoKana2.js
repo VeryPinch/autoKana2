@@ -157,15 +157,16 @@
         spCaptured = false;
         // 全角片仮名に変換して記号を取り除く
         var lastRubyCheckStr = lastRubyStr.toWideCase().toKatakanaCase().replace(check_pattern, "");
-        var rubyCheckStr = rubyStr.toWideCase().toKatakanaCase().replace(check_pattern, "");
+        var rubyEditStr = rubyStr.toWideCase().toKatakanaCase();
+        var rubyCheckStr = rubyEditStr.replace(check_pattern, "");
 
         if (lastRubyCheckStr.length > 0 && rubyCheckStr.length > 0 && 
-            lastRubyStr.toWideCase().toKatakanaCase() === rubyStr.toWideCase().toKatakanaCase()){
+            lastRubyStr.toWideCase().toKatakanaCase() === rubyEditStr){
           // 平仮名←→片仮名変換は無視する
           return;
         }
         
-        if (isChrome55 || isOpera42){
+        if ((isChrome55 || isOpera42) && rubyStr.length <= 1){
           // Chrome 55.0.x はcompositionupdateのイベント引数で入力文字が1文字づつしか取得出来ないので
           // setTimeoutで現在入力中のテキストを取得して補完する
           setTimeout(function(){
@@ -175,7 +176,8 @@
             }
             if (nowText.substr(0, orgText.length) === orgText && nowText.substr(nowText.length - 1) === rubyStr) {
               rubyStr = nowText.substr(orgText.length, nowText.length);
-              rubyCheckStr = rubyStr.toWideCase().toKatakanaCase().replace(check_pattern, "");
+              rubyEditStr = rubyStr.toWideCase().toKatakanaCase();
+              rubyCheckStr = rubyEditStr.replace(check_pattern, "");
             }
 
             if (lastRubyCheckStr.length > 0 && rubyStr.length > 0 && rubyCheckStr.length === 0){
@@ -183,9 +185,24 @@
               return;
             }
 
-            if (lastRubyStr.substr(0, rubyStr.length - 1) !== rubyStr.substr(0, rubyStr.length - 1)){
-              // かな英数字記号の混ぜ書き変換は無視する
-              return;
+            if (elKanji[0].selectionStart == elKanji.val().length){
+              if (rubyEditStr.substr(rubyEditStr.length -1).replace(check_pattern, "").length !== 0){
+                var testChar = "";
+                var i = lastRubyStr.length -1;
+                do{
+                  var lstChar = lastRubyStr.substr(i, 1).toKatakanaCase();
+                  if (lstChar.replace(check_pattern, "").length !== 0){
+                    testChar = lastRubyStr.substr(0, i + 1).toKatakanaCase();
+                    break;
+                  }
+                  i--;
+                } while (i > -1);
+
+                if (rubyEditStr.substr(0, testChar.length) !== testChar.substr(0, rubyEditStr.length)){
+                  // かな英数字記号の混ぜ書き変換は無視する
+                    return;
+                }
+              }
             }
 
             if (rubyStr.length > 0){
@@ -220,9 +237,25 @@
             return;
           }
           
-          if (lastRubyStr.substr(0, rubyStr.length - 1) !== rubyStr.substr(0, rubyStr.length - 1)){
-            // かな英数字記号の混ぜ書き変換は無視する
-            return;
+          
+          if (elKanji[0].selectionStart == elKanji.val().length){
+            if (rubyEditStr.substr(rubyEditStr.length -1).replace(check_pattern, "").length !== 0){
+              var testChar = "";
+              var i = lastRubyStr.length -1;
+              do{
+                var lstChar = lastRubyStr.substr(i, 1).toKatakanaCase();
+                if (lstChar.replace(check_pattern, "").length !== 0){
+                  testChar = lastRubyStr.substr(0, i + 1).toKatakanaCase();
+                  break;
+                }
+                i--;
+              } while (i > -1);
+            
+              if (rubyEditStr.substr(0, testChar.length) !== testChar.substr(0, rubyEditStr.length)){
+                // かな英数字記号の混ぜ書き変換は無視する
+                  return;
+              }
+            }
           }
 
           if (ff_msimeFlag){

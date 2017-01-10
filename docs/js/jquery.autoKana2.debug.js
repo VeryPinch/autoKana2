@@ -168,26 +168,28 @@
       $("#debug").val($("#debug").val() + "\n\n" + "compositionupdate");
       $("#debug").val($("#debug").val() + "\n" + "e.originalEvent.data:'" + e.originalEvent.data + "'");
       $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
-      setTimeout(function(){
-      $("#debug").val($("#debug").val() + "\n" + "elKanji.val():'" + elKanji.val() + "'");
-      }, 0);
       var orgInput = e.originalEvent.data;
       var rubyStr = orgInput.toWideCase().replace(ruby_pattern, ""); // 半角カナ入力を考慮して全角に揃える
       var ieSaveFlag = false;
+        $("#debug").val($("#debug").val() + "\n" + "lastRubyStr:'" + lastRubyStr + "'");
+        $("#debug").val($("#debug").val() + "\n" + "rubyStr:'" + rubyStr + "'");
       if (orgInput.toWideCase().length === rubyStr.length){
+          $("#debug").val($("#debug").val() + "\n" + "ルビ取得処理");
         // ルビ取得対象外の文字が混じってない場合
         spCaptured = false;
         // 全角片仮名に変換して記号を取り除く
         var lastRubyCheckStr = lastRubyStr.toWideCase().toKatakanaCase().replace(check_pattern, "");
-        var rubyCheckStr = rubyStr.toWideCase().toKatakanaCase().replace(check_pattern, "");
+        var rubyEditStr = rubyStr.toWideCase().toKatakanaCase();
+        var rubyCheckStr = rubyEditStr.replace(check_pattern, "");
 
         if (lastRubyCheckStr.length > 0 && rubyCheckStr.length > 0 && 
-            lastRubyStr.toWideCase().toKatakanaCase() === rubyStr.toWideCase().toKatakanaCase()){
+            lastRubyStr.toWideCase().toKatakanaCase() === rubyEditStr){
           // 平仮名←→片仮名変換は無視する
+          $("#debug").val($("#debug").val() + "\n" + "平仮名←→片仮名変換");
           return;
         }
         
-        if (isChrome55 || isOpera42){
+        if ((isChrome55 || isOpera42) && rubyStr.length <= 1){
           // Chrome 55.0.x はcompositionupdateのイベント引数で入力文字が1文字づつしか取得出来ないので
           // setTimeoutで現在入力中のテキストを取得して補完する
           setTimeout(function(){
@@ -197,28 +199,51 @@
             }
             if (nowText.substr(0, orgText.length) === orgText && nowText.substr(nowText.length - 1) === rubyStr) {
               rubyStr = nowText.substr(orgText.length, nowText.length);
-              rubyCheckStr = rubyStr.toWideCase().toKatakanaCase().replace(check_pattern, "");
+              rubyEditStr = rubyStr.toWideCase().toKatakanaCase();
+              rubyCheckStr = rubyEditStr.replace(check_pattern, "");
             }
 
             if (lastRubyCheckStr.length > 0 && rubyStr.length > 0 && rubyCheckStr.length === 0){
               // かな→英数字記号変換は無視する
+              $("#debug").val($("#debug").val() + "\n" + "かな→英数字記号変換");
               return;
             }
 
-            if (lastRubyStr.substr(0, rubyStr.length - 1) !== rubyStr.substr(0, rubyStr.length - 1)){
-              // かな英数字記号の混ぜ書き変換は無視する
-              return;
+            if (elKanji[0].selectionStart == elKanji.val().length){
+              if (rubyEditStr.substr(rubyEditStr.length -1).replace(check_pattern, "").length !== 0){
+                var testChar = "";
+                var i = lastRubyStr.length -1;
+                do{
+                  var lstChar = lastRubyStr.substr(i, 1).toKatakanaCase();
+                  $("#debug").val($("#debug").val() + "\n" + "lstChar:'" + lstChar + "'");
+                  $("#debug").val($("#debug").val() + "\n" + "i:'" + i + "'");
+                  if (lstChar.replace(check_pattern, "").length !== 0){
+                  $("#debug").val($("#debug").val() + "\n" + "lastRubyStr.substr(0, i + 1).toKatakanaCase():'" + lastRubyStr.substr(0, i + 1).toKatakanaCase() + "'");
+                    testChar = lastRubyStr.substr(0, i + 1).toKatakanaCase();
+                    break;
+                  }
+                  i--;
+                } while (i > -1);
+
+                $("#debug").val($("#debug").val() + "\n" + "testChar:'" + testChar + "'");
+                $("#debug").val($("#debug").val() + "\n" + "rubyEditStr.substr(0, testChar.length):'" + rubyEditStr.substr(0, testChar.length) + "'");
+                if (rubyEditStr.substr(0, testChar.length) !== testChar.substr(0, rubyEditStr.length)){
+                  // かな英数字記号の混ぜ書き変換は無視する
+                  $("#debug").val($("#debug").val() + "\n" + "かな英数字記号の混ぜ書き変換");
+                    return;
+                }
+              }
             }
 
             if (rubyStr.length > 0){
+              $("#debug").val($("#debug").val() + "\n" + "rubyStr.length > 0");
               lastRubyStr = rubyStr;
             }else{
+              $("#debug").val($("#debug").val() + "\n" + "else");
               lastRubyStr = lastRubyStr.substr(0, lastRubyStr.length -1);
             }
           }, 0);
         }else{
-        $("#debug").val($("#debug").val() + "\n" + "lastRubyStr:'" + lastRubyStr + "'");
-        $("#debug").val($("#debug").val() + "\n" + "rubyStr:'" + rubyStr + "'");
           if (ff_msimeFlag){
             if (selectText !== rubyStr){
               ff_msimeFlag = false;
@@ -244,18 +269,43 @@
 
           if (!ieSaveFlag && lastRubyCheckStr.length > 0 && rubyStr.length > 0 && rubyCheckStr.length === 0){
             // かな→英数字記号変換は無視する
+              $("#debug").val($("#debug").val() + "\n" + "かな→英数字記号変換");
             return;
           }
           
-          if (lastRubyStr.substr(0, rubyStr.length - 1) !== rubyStr.substr(0, rubyStr.length - 1)){
-            // かな英数字記号の混ぜ書き変換は無視する
-            return;
+          
+          if (elKanji[0].selectionStart == elKanji.val().length){
+            if (rubyEditStr.substr(rubyEditStr.length -1).replace(check_pattern, "").length !== 0){
+              var testChar = "";
+              var i = lastRubyStr.length -1;
+              do{
+                var lstChar = lastRubyStr.substr(i, 1).toKatakanaCase();
+                $("#debug").val($("#debug").val() + "\n" + "lstChar:'" + lstChar + "'");
+                $("#debug").val($("#debug").val() + "\n" + "i:'" + i + "'");
+                if (lstChar.replace(check_pattern, "").length !== 0){
+                $("#debug").val($("#debug").val() + "\n" + "lastRubyStr.substr(0, i + 1).toKatakanaCase():'" + lastRubyStr.substr(0, i + 1).toKatakanaCase() + "'");
+                  testChar = lastRubyStr.substr(0, i + 1).toKatakanaCase();
+                  break;
+                }
+                i--;
+              } while (i > -1);
+            
+              $("#debug").val($("#debug").val() + "\n" + "testChar:'" + testChar + "'");
+              $("#debug").val($("#debug").val() + "\n" + "rubyEditStr.substr(0, testChar.length):'" + rubyEditStr.substr(0, testChar.length) + "'");
+              if (rubyEditStr.substr(0, testChar.length) !== testChar.substr(0, rubyEditStr.length)){
+                // かな英数字記号の混ぜ書き変換は無視する
+                $("#debug").val($("#debug").val() + "\n" + "かな英数字記号の混ぜ書き変換");
+                  return;
+              }
+            }
           }
 
           if (ff_msimeFlag){
+              $("#debug").val($("#debug").val() + "\n" + "ff_msimeFlag");
             lastRubyStr = "";
           }else{
             if (rubyStr.length > 0){
+              $("#debug").val($("#debug").val() + "\n" + "lastRubyStr = rubySt");
               lastRubyStr = rubyStr;
             }
           }
@@ -263,6 +313,7 @@
         }
 
       }else{
+      $("#debug").val($("#debug").val() + "\n" + "漢字判定");
         // MS-IMEの場合、IME変換後にBSキーで変換した文字を削除出来るので正しくルビを取得出来ない
         if (lastOrgInput.length - orgInput.length === 1){
           if (lastOrgInput.substr(0, orgInput.length) === orgInput){
