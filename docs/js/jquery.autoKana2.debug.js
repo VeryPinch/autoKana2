@@ -314,19 +314,6 @@
 
       }else{
       $("#debug").val($("#debug").val() + "\n" + "漢字判定");
-        // MS-IMEの場合、IME変換後にBSキーで変換した文字を削除出来るので正しくルビを取得出来ない
-        if (lastOrgInput.length - orgInput.length === 1){
-          if (lastOrgInput.substr(0, orgInput.length) === orgInput){
-            elKanji.data("notSupport", "1");
-          }
-        }
-      }
-      lastOrgInput = orgInput;
-
-      if (ieSaveFlag){
-        checkPatternM(orgInput, lastRubyStr);
-      }
-      
        setTimeout(function(){
          var nowText = elKanji.val();
       $("#debug").val($("#debug").val() + "\n" + "nowText:'" + nowText + "'");
@@ -344,6 +331,20 @@
            }
          }
        }, 0);
+
+        // MS-IMEの場合、IME変換後にBSキーで変換した文字を削除出来るので正しくルビを取得出来ない
+        if (lastOrgInput.length - orgInput.length === 1){
+          if (lastOrgInput.substr(0, orgInput.length) === orgInput){
+            elKanji.data("notSupport", "1");
+          }
+        }
+      }
+      lastOrgInput = orgInput;
+
+      if (ieSaveFlag){
+        checkPatternM(orgInput, lastRubyStr);
+      }
+      
       
     });
     
