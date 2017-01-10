@@ -329,6 +329,8 @@
       
        setTimeout(function(){
          var nowText = elKanji.val();
+      $("#debug").val($("#debug").val() + "\n" + "nowText:'" + nowText + "'");
+      $("#debug").val($("#debug").val() + "\n" + "orgText:'" + orgText + "'");
          if (nowText.substr(0, orgText.length) === orgText){
            var nowInput = nowText.substr(orgText.length, nowText.length - orgText.length);
       $("#debug").val($("#debug").val() + "\n" + "nowInput:'" + nowInput + "'");
