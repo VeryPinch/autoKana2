@@ -314,6 +314,9 @@
 
       }else{
       $("#debug").val($("#debug").val() + "\n" + "漢字判定");
+      
+      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionStart:'" + elKanji[0].selectionStart + "'");
+      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionEnd:'" + elKanji[0].selectionEnd + "'");
 
          var nowText = elKanji.val();
       $("#debug").val($("#debug").val() + "\n" + "nowText:'" + nowText + "'");
