@@ -314,7 +314,7 @@
 
       }else{
       $("#debug").val($("#debug").val() + "\n" + "漢字判定");
-       setTimeout(function(){
+
          var nowText = elKanji.val();
       $("#debug").val($("#debug").val() + "\n" + "nowText:'" + nowText + "'");
       $("#debug").val($("#debug").val() + "\n" + "orgText:'" + orgText + "'");
@@ -330,7 +330,6 @@
              }
            }
          }
-       }, 0);
 
         // MS-IMEの場合、IME変換後にBSキーで変換した文字を削除出来るので正しくルビを取得出来ない
         if (lastOrgInput.length - orgInput.length === 1){
