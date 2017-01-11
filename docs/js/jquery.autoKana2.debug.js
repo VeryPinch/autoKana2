@@ -15,7 +15,7 @@
     }, options);
 
     // キーボードを１タイプで入力できるJIS X0208の文字を対象とする
-    var ruby_pattern = new RegExp("[^　ぁ-ゖァ-ヶＡ-Ｚａ-ｚ０-９｀〜！＠＃＄％＾＆＊（）＿ー＝＋｛「｝」｜；：’”＜、。＞・？／]", "g");
+    var ruby_pattern = new RegExp("[^　ぁ-ゖァ-ヶＡ-Ｚａ-ｚ０-９｀〜！＠＃＄％＾＆＊（）＿ー－＝＋｛「｝」｜；：’”＜、。＞・？／]", "g");
     // 英数記号削除用
     var check_pattern = new RegExp("[^　ァ-ヶー]", "g");
     // 末尾のｎチェック用(ｎｎ自動保管対策)
@@ -314,25 +314,6 @@
 
       }else{
       $("#debug").val($("#debug").val() + "\n" + "漢字判定");
-      
-      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionStart:'" + elKanji[0].selectionStart + "'");
-      $("#debug").val($("#debug").val() + "\n" + "elKanji[0].selectionEnd:'" + elKanji[0].selectionEnd + "'");
-
-         var nowText = elKanji.val();
-      $("#debug").val($("#debug").val() + "\n" + "nowText:'" + nowText + "'");
-      $("#debug").val($("#debug").val() + "\n" + "orgText:'" + orgText + "'");
-         if (nowText.substr(0, orgText.length) === orgText){
-           var nowInput = nowText.substr(orgText.length, nowText.length - orgText.length);
-      $("#debug").val($("#debug").val() + "\n" + "nowInput:'" + nowInput + "'");
-           if (nowInput !== orgInput){
-             var index = nowInput.indexOf(orgInput);
-             if (index > -1){
-               var work = nowInput.substr(index + orgInput.length, nowInput.length - (index + orgInput.length));
-      $("#debug").val($("#debug").val() + "\n" + "work:'" + work + "'");
-               lastRubyStr = lastRubyStr.substr(0, lastRubyStr.length - work.length);
-             }
-           }
-         }
 
         // MS-IMEの場合、IME変換後にBSキーで変換した文字を削除出来るので正しくルビを取得出来ない
         if (lastOrgInput.length - orgInput.length === 1){
