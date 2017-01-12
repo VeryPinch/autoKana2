@@ -173,6 +173,7 @@
       var ieSaveFlag = false;
         $("#debug").val($("#debug").val() + "\n" + "lastRubyStr:'" + lastRubyStr + "'");
         $("#debug").val($("#debug").val() + "\n" + "rubyStr:'" + rubyStr + "'");
+        $("#debug").val($("#debug").val() + "\n" + "orgInput.toWideCase():'" + orgInput.toWideCase() + "'");
       if (orgInput.toWideCase().length === rubyStr.length){
           $("#debug").val($("#debug").val() + "\n" + "ルビ取得処理");
         // ルビ取得対象外の文字が混じってない場合
