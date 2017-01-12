@@ -15,7 +15,7 @@
     }, options);
 
     // キーボードを１タイプで入力できるJIS X0208の文字を対象とする
-    var ruby_pattern = new RegExp("[^　ぁ-ゖァ-ヶＡ-Ｚａ-ｚ０-９｀〜！＠＃＄％＾＆＊（）＿ー－＝＋｛｝「」｜；：’”＜、。＞・？／￥＼［］€…☆→○×÷〒々〆]", "g");
+    var ruby_pattern = new RegExp("[^　ぁ-ゖァ-ヶＡ-Ｚａ-ｚ０-９｀〜！＠＃＄％＾＆＊（）＿ー－＝＋｛｝「」｜；：’”＜、。＞・？／￥＼［］♪€…☆→○×÷〒々〆]", "g");
     // 英数記号削除用
     var check_pattern = new RegExp("[^　ァ-ヶー]", "g");
     // 末尾のｎチェック用(ｎｎ自動保管対策)
@@ -469,8 +469,8 @@ String.prototype.toWideCase = function(){
 String.prototype.toWideCase.MAPPING = {
   0x5C:0xFFE5,
   0x2D:0x2015,
-  0x27:0x2018,
-  0x22:0x201C,
+  0x27:0x2019,
+  0x22:0x201D,
   0x20:0x3000,
   0xFF64:0x3001,
   0xFF61:0x3002,
