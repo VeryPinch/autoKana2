@@ -293,7 +293,7 @@
       // 1.文字列を入力し確定前にBSキーで1文字以上を削除した状態で変換せずに確定した場合
       // 2.特定の文字列で文節変換をした場合(やまざき→変換→山崎→文節変換→山咲き→文節変換→山咲)
       var ie_msime = false;
-      if ((isIE || isEdge) && orgInput.length === 0 && lastRubyStr.length > 0){
+      if ((isIE || isEdge) && orgInput.length === 0 && lastRubyStr.length > 0 && nowText !== orgText){
         ie_msime = true;
       }
 
