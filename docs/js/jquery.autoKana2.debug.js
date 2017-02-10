@@ -58,7 +58,7 @@
     if ((ua.indexOf("chrome") > -1) && (ua.indexOf("opr") > -1)){
       isOpera = true;
       var st = ua.indexOf("opr");
-      if (ua.substr(st + 4).indexOf("42.0") > -1){
+      if ((ua.substr(st + 4).indexOf("42.0") > -1) || (ua.substr(st + 4).indexOf("43.0") > -1)){
         isOpera42 = true;
       }
     }
