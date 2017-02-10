@@ -192,7 +192,7 @@
           return;
         }
         
-        if ((isChrome55 || isOpera42) && rubyStr.length <= 1){
+        if ((isChrome55 || isOpera42)){
           // Chrome 55.0.x はcompositionupdateのイベント引数で入力文字が1文字づつしか取得出来ないので
           // setTimeoutで現在入力中のテキストを取得して補完する
           setTimeout(function(){
@@ -200,7 +200,7 @@
             if (lastText.length > 0){
               nowText = nowText.substr(0, nowText.length - lastText.length);
             }
-            if (nowText.substr(0, orgText.length) === orgText && nowText.substr(nowText.length - 1) === rubyStr) {
+            if (nowText.substr(0, orgText.length) === orgText && nowText.substr(nowText.length - rubyStr.length) === rubyStr) {
               rubyStr = nowText.substr(orgText.length, nowText.length);
               rubyEditStr = rubyStr.toWideCase().toKatakanaCase();
               rubyCheckStr = rubyEditStr.replace(check_pattern, "");
